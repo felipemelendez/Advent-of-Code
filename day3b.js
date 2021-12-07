@@ -3,7 +3,6 @@ const fs = require('fs');
 diagnosticReport = () => {
   const diagnosticInput = fs.readFileSync('binary.txt', {encoding: 'utf8'})
   .split('\n')
-  .filter((x) => Boolean(x))
   return diagnosticInput;
 }
 const dataLength = diagnosticReport()[0].length;
@@ -12,8 +11,8 @@ binaryDataRating = (diagnosticReport) => {
   const epsilon = Array(dataLength).fill(0);
   const gamma = Array(dataLength).fill(0);
 
-  for (const line of diagnosticReport) {
-    const bits = [...line];
+  for (const row of diagnosticReport) {
+    const bits = [...row];
     bits.forEach((bit, index) => {
       if (bit === "0") {
         epsilon[index]++;
@@ -22,33 +21,17 @@ binaryDataRating = (diagnosticReport) => {
       }
     });
   }
-  // -------  Different method to compute Day 1 --------- //
-  let gammaRate = ""; // most common bits
-  let epsilonRate = ""; // least common bits
-
-  for (let i = 0; i < dataLength; i++) {
-    let bit = 0;
-    if (gamma[i] > epsilon[i]) {
-      bit = 1;
-    }
-    gammaRate += bit;
-    epsilonRate += bit === 1 ? 0 : 1;
-  }
-  // console.log(parseInt(gammaRate, 2));
-  // console.log(parseInt(epsilonRate, 2));
-  // console.log(parseInt(gammaRate, 2) * parseInt(epsilonRate, 2))
-
   return {epsilon, gamma};
 }
 // console.log(binaryDataRating(diagnosticReport()))
 
-oxygenGeneratorRating = (lines, index = 0) => {
-  const { epsilon, gamma } = binaryDataRating(lines);
+oxygenGeneratorRating = (rows, index = 0) => {
+  const { epsilon, gamma } = binaryDataRating(rows);
   let mostCommonBit = "1";
   if (epsilon[index] > gamma[index]) {
     mostCommonBit = "0";
   }
-  const filtered = lines.filter((line) => line[index] === mostCommonBit);
+  const filtered = rows.filter((row) => row[index] === mostCommonBit);
   if (filtered.length === 1) {
     return filtered[0]
   }
@@ -57,13 +40,13 @@ oxygenGeneratorRating = (lines, index = 0) => {
 const o2Rating = oxygenGeneratorRating(diagnosticReport());
 //console.log(o2Rating);
 
-co2ScrubberRating = (lines, index = 0) => {
-  const { epsilon, gamma } = binaryDataRating(lines);
+co2ScrubberRating = (rows, index = 0) => {
+  const { epsilon, gamma } = binaryDataRating(rows);
   let leastCommonBit = "0";
   if (epsilon[index] > gamma[index]) {
     leastCommonBit = "1";
   }
-  const filtered = lines.filter((line) => line[index] === leastCommonBit);
+  const filtered = rows.filter((row) => row[index] === leastCommonBit);
   if (filtered.length === 1) {
     return filtered[0]
   }
